@@ -51,12 +51,16 @@ async def handle_voice_message(message: Message, bot: Bot):
         file_data.seek(0)
 
         # Загрузка в Minio
-        file_name = f"{message.from_user.id}/{message.message_id}.ogg"
+        if message.from_user is not None:
+            user_id = message.from_user.id
+        else:
+            user_id = None
+        file_name = f"{user_id}/{message.message_id}.ogg"
         # voice_url = await upload_file_to_minio(file_data, file_name)
 
         # Отправка в очередь
         task = {
-            "sender_id": message.from_user.id,
+            "sender_id": user_id,
             "message_id": message.message_id,
             "bucket_name": config.MINIO_BUCKET,
             "file_name": file_name,
