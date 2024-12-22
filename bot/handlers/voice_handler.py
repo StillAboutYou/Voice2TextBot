@@ -4,11 +4,11 @@ from aiogram import Bot
 from aiogram.types import Message
 from bot.config import config
 from bot.utils.rabbitmq_client import publish_to_queue
-from bot.utils.s3_upload import upload_file_to_minio
 from aiogram.exceptions import TelegramBadRequest
 
 
-async def get_file_with_retries(bot: Bot, file_id: str, retries: int = 3, delay: int = 2):
+async def get_file_with_retries(bot: Bot, file_id: str,
+                                retries: int = 3, delay: int = 2):
     """
     Получение файла с повторами при временной недоступности.
     :param bot: Объект бота
@@ -25,7 +25,6 @@ async def get_file_with_retries(bot: Bot, file_id: str, retries: int = 3, delay:
                 await asyncio.sleep(delay)
             else:
                 raise e
-
 
 
 async def handle_voice_message(message: Message, bot: Bot):
@@ -53,7 +52,7 @@ async def handle_voice_message(message: Message, bot: Bot):
 
         # Загрузка в Minio
         file_name = f"{message.from_user.id}/{message.message_id}.ogg"
-        voice_url = await upload_file_to_minio(file_data, file_name)
+        # voice_url = await upload_file_to_minio(file_data, file_name)
 
         # Отправка в очередь
         task = {

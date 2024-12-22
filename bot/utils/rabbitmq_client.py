@@ -19,7 +19,7 @@ def publish_to_queue(queue_name: str, message: dict):
             exchange="",
             routing_key=queue_name,
             body=json.dumps(message),
-            properties=pika.BasicProperties(delivery_mode=2),  # Устойчивое сообщение
+            properties=pika.BasicProperties(delivery_mode=2),  # Stable message
         )
         connection.close()
     except Exception as e:

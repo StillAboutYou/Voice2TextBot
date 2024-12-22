@@ -5,11 +5,12 @@ import io
 # Инициализация клиента Minio
 s3_client = boto3.client(
     's3',
-    endpoint_url=f"http://{config.MINIO_ENDPOINT}",  # Например: "http://localhost:9000"
+    endpoint_url=f"http://{config.MINIO_ENDPOINT}",  # Например localhost:9000"
     aws_access_key_id=config.MINIO_ACCESS_KEY,
     aws_secret_access_key=config.MINIO_SECRET_KEY,
-    region_name='us-east-1'  # Можно указать любой регион или опустить, если не требуется
+    region_name='us-east-1'  # Указать любой регион, опускаем если не требуется
 )
+
 
 def download_file_from_minio(bucket_name, file_name):
     """
@@ -18,8 +19,6 @@ def download_file_from_minio(bucket_name, file_name):
     :param file_name: Имя файла.
     :return: BytesIO объект с данными файла.
     """
-    import io
-
     file_data = io.BytesIO()
     s3_client.download_fileobj(bucket_name, file_name, file_data)
     file_data.seek(0)

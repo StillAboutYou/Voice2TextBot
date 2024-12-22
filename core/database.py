@@ -7,6 +7,7 @@ from bot.config import config
 engine = create_engine(config.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 def save_recognized_text(user_id, voice_url, recognized_text):
     session = SessionLocal()
     try:

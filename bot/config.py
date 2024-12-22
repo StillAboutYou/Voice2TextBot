@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 # Загружаем переменные окружения из .env файла
 load_dotenv("../.env")
 
+
 class Config(BaseSettings):
     # Telegram Bot API token
     BOT_TOKEN: str
@@ -37,10 +38,17 @@ class Config(BaseSettings):
     @property
     def DATABASE_URL(self):
         if bool(self.IS_LOCAL):
-            return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@postgres:5432/{self.POSTGRES_DB}"
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-
+            return (
+                f"postgresql://{self.POSTGRES_USER}:" +
+                f"{self.POSTGRES_PASSWORD}" +
+                f"@postgres:5432/{self.POSTGRES_DB}"
+            )
+        return (
+            f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@" +
+            f"{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        )
     class Config:
         env_file = "../.env"
+
 
 config = Config()

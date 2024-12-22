@@ -19,6 +19,10 @@ async def upload_file_to_minio(file_data, file_name: str) -> str:
         )
 
         s3_client.upload_fileobj(file_data, config.MINIO_BUCKET, file_name)
-        return f"http://{config.MINIO_ENDPOINT}/{config.MINIO_BUCKET}/{file_name}"
+        return (
+            f"http://{config.MINIO_ENDPOINT}/" +
+            f"{config.MINIO_BUCKET}/{file_name}"
+        )
+
     except (NoCredentialsError, PartialCredentialsError) as e:
         raise RuntimeError(f"Ошибка при загрузке файла в Minio: {e}")

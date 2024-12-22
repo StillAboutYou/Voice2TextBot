@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 bot = Bot(token=config.BOT_TOKEN)
 dp = Dispatcher()
 
+
 # Регистрация хендлеров
 def register_handlers(dp: Dispatcher):
     dp.message.register(
@@ -30,12 +31,16 @@ def register_handlers(dp: Dispatcher):
         lambda message: message.content_type == ContentType.VOICE
     )
 
+
 register_handlers(dp)
+
 
 # Хендлер для команды /start
 @dp.message(Command("start"))
 async def start_command_handler(message: Message):
-    await message.reply("Бот запущен. Отправьте голосовое сообщение для обработки.")
+    await message.reply("Бот запущен. " +
+                        "Отправьте голосовое сообщение для обработки.")
+
 
 # Асинхронный RabbitMQ consumer
 async def rabbitmq_consumer():
@@ -48,10 +53,12 @@ async def rabbitmq_consumer():
             connection = pika.BlockingConnection(pika.ConnectionParameters(
                 host=config.RABBITMQ_HOST,
                 port=int(config.RABBITMQ_PORT),
-                credentials=pika.PlainCredentials(config.RABBITMQ_USER, config.RABBITMQ_PASSWORD)
+                credentials=pika.PlainCredentials(config.RABBITMQ_USER,
+                                                  config.RABBITMQ_PASSWORD)
             ))
             channel = connection.channel()
-            channel.queue_declare(queue=config.RABBITMQ_RESPONSE_QUEUE, durable=True)
+            channel.queue_declare(queue=config.RABBITMQ_RESPONSE_QUEUE,
+                                  durable=True)
             logger.info("Успешное подключение к RabbitMQ")
 
             # Callback для обработки сообщений из очереди
@@ -69,14 +76,16 @@ async def rabbitmq_consumer():
                                 text=f"Распознанный текст: {recognized_text}"
                             ), loop=loop
                         )
-                        logger.info(f"Сообщение отправлено пользователю {sender_id}: {recognized_text}")
+                        logger.info("Сообщение отправлено пользователю" +
+                                    f"{sender_id}: {recognized_text}")
                     ch.basic_ack(delivery_tag=method.delivery_tag)
                 except Exception as e:
                     logger.error(f"Ошибка при обработке сообщения: {e}")
                     ch.basic_ack(delivery_tag=method.delivery_tag)
 
             # Запускаем потребление сообщений
-            channel.basic_consume(queue=config.RABBITMQ_RESPONSE_QUEUE, on_message_callback=on_message)
+            channel.basic_consume(queue=config.RABBITMQ_RESPONSE_QUEUE,
+                                  on_message_callback=on_message)
             logger.info("RabbitMQ consumer запущен и ожидает сообщения...")
             channel.start_consuming()
 
@@ -85,6 +94,7 @@ async def rabbitmq_consumer():
 
     # Запускаем блокирующий consumer в отдельном потоке
     await loop.run_in_executor(None, consume)
+
 
 # Основная функция запуска
 async def main():
