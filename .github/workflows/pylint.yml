@@ -1,6 +1,11 @@
 name: verified
 
-on: [push]
+on:
+  push:
+    branches:
+      - wip
+  pull_request:
+
 
 jobs:
   linter:
